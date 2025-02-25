@@ -83,12 +83,18 @@ async def post_url(url_request: URLRequest):
         # Получаем финальный результат
         final_result = json.loads(rec.FinalResult())
         results.append(final_result)
-
+        subtitles = []
+        for i in results['result']:
+            if len(i['text']) > 0:
+                subtitles.append({"text": i['text'],
+                                  "start": i['result'][0]['start'],
+                                  "end": i['result'][-1]['end']})
         # Возвращаем JSON с именем файла и сообщением об успешной загрузке
         return JSONResponse(content={
             "filename": audio_tmp_file,
             "message": "File uploaded successfully",
-            "result": results
+            "result": results,
+            "subtitles": subtitles
         })
 
     except Exception as e:
