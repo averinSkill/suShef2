@@ -3,6 +3,7 @@ import wave
 import json
 import yt_dlp
 import moviepy.editor as mp
+from pydantic import BaseModel
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from vosk import Model, KaldiRecognizer
@@ -17,7 +18,7 @@ UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # Путь к модели Vosk
-model_path = r".\vosk-model-ru-0.42"  # Замените на путь к вашей модели
+model_path = r"C:\Users\culdc\Coding\suShef\vosk-model-ru-0.42"  # Замените на путь к вашей модели
 # Загрузка модели
 t0 = datetime.now()
 if not os.path.exists(model_path):
@@ -47,8 +48,12 @@ def extract_audio_from_video(video_file, audio_file):
     audio.export(audio_file, format="wav")
 
 
-@app.post("/process-url/")
-async def process_url(url_request: URLRequest):
+class URLRequest(BaseModel):
+    url: str
+
+
+@app.post("/post-url/")
+async def post_url(url_request: URLRequest):
     try:
         video_tmp_file = "video_tmp_file.mp4"
         audio_tmp_file = "audio_tmp_file.wav"
