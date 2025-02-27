@@ -20,7 +20,7 @@ UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # Путь к модели Vosk
-model_path = r"C:\Users\culdc\Coding\suShef\vosk-model-ru-0.42"  # Замените на путь к вашей модели
+model_path = r"C:\Users\culdc\Coding\suShef\vosk-model-ru-0.42"  # Замени на путь к модели
 # Загрузка модели
 t0 = datetime.now()
 if not os.path.exists(model_path):
@@ -96,11 +96,16 @@ async def post_url(url_request: URLRequest):
         final_result = json.loads(rec.FinalResult())
         results.append(final_result)
         subtitles = []
+        # frames = []
         for i in results['result']:
-            if len(i['text']) > 0:
-                subtitles.append({"text": i['text'],
+            if len(i['text']) > 2:
+                subtitles.append({"frame": save_frame(video_tmp_file, i['result'][0]['start']),
+                                  "text": i['text'],
                                   "start": i['result'][0]['start'],
                                   "end": i['result'][-1]['end']})
+
+
+
         # Возвращаем JSON с именем файла и сообщением об успешной загрузке
         return JSONResponse(content={
             "filename": audio_tmp_file,
