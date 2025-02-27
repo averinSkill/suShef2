@@ -1,6 +1,7 @@
 import os
 import wave
 import json
+import base64
 import yt_dlp
 import moviepy.editor as mp
 from pydantic import BaseModel
@@ -46,6 +47,15 @@ def extract_audio_from_video(video_file, audio_file):
     audio = AudioSegment.from_file(audio_file)
     audio = audio.set_channels(1).set_frame_rate(16000)
     audio.export(audio_file, format="wav")
+
+
+def save_frame(video_tmp_file, sec):
+    # saving a frame at 2 second
+    clip = mp.VideoFileClip(video_tmp_file)
+    clip.save_frame("frame2.png", t=sec)
+    with open("frame2.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return encoded_string
 
 
 class URLRequest(BaseModel):
