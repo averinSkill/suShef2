@@ -4,6 +4,7 @@ import json
 import base64
 import yt_dlp
 import moviepy.editor as mp
+from urllib.parse import urlparse
 from pydantic import BaseModel
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
@@ -65,9 +66,10 @@ class URLRequest(BaseModel):
 @app.post("/post-url/")
 async def post_url(url_request: URLRequest):
     try:
-        video_tmp_file = "video_tmp_file.mp4"
-        audio_tmp_file = "audio_tmp_file.wav"
         video_url = url_request.url
+        url_parse = urlparse(video_url)
+        video_tmp_file = url_parse.netloc + o.path.replace('/', '_') + '.mp4'
+        audio_tmp_file = url_parse.netloc + o.path.replace('/', '_') + '.wav'
         download_video(video_url, video_tmp_file)
         extract_audio_from_video(video_tmp_file, audio_tmp_file)
         print("Открываем аудиофайл...")
